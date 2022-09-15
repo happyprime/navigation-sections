@@ -1,0 +1,10 @@
+node_modules/
+vendor/
+.distignore
+.estlintrc.js
+.gitignore
+composer.json
+composer.lock
+package.json
+package-lock.json
+phpcs.xml

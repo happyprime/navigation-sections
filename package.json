@@ -1,0 +1,30 @@
+{
+	"name": "navigation-sections",
+	"version": "0.0.1",
+	"description": "",
+	"author": "Happy Prime",
+	"license": "GPL-2.0-or-later",
+	"keywords": [
+		"plugin",
+		"wordpress",
+		"navigation"
+	],
+	"homepage": "https://github.com/happyprime/navigation-sections/",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/happyprime/navigation-sections.git"
+	},
+	"bugs": {
+		"url": "https://github.com/happyprime/navigation-sections/"
+	},
+	"devDependencies": {
+		"@wordpress/scripts": "^24.1.0"
+	},
+	"scripts": {
+		"build": "wp-scripts build",
+		"start": "wp-scripts start",
+		"lint:js": "wp-scripts lint-js",
+		"fix:js": "wp-scripts lint-js --fix",
+		"lint:pkg-json": "wp-scripts lint-pkg-json"
+	}
+}
