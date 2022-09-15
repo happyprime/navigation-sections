@@ -45,9 +45,12 @@ function filter_nav_menu_item_args( $args, $menu_item, $depth ) {
 
 	$items = new \WP_Query(
 		[
-			'post_type'   => 'page',
-			'post_parent' => $nav_parent->object_id,
-			'tax_query'   => [
+			'post_type'      => 'page',
+			'post_parent'    => $nav_parent->object_id,
+			'posts_per_page' => 100,
+			'order'          => 'ASC',
+			'orderby'        => 'name',
+			'tax_query'      => [
 				[
 					'taxonomy' => \NavigationSections\Taxonomy\get_slug(),
 					'field'    => 'id',
