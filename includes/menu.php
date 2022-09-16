@@ -60,11 +60,14 @@ function filter_nav_menu_item_args( \stdClass $args, \WP_Post $menu_item ) : \st
 
 	$items = new \WP_Query(
 		[
-			'post_type'      => 'page',
-			'posts_per_page' => 100,
-			'order'          => 'ASC',
-			'orderby'        => 'menu_order name',
-			'tax_query'      => [
+			'fields'                 => 'ids',
+			'post_type'              => 'page',
+			'posts_per_page'         => 100,
+			'no_found_rows'          => true,
+			'order'                  => 'ASC',
+			'orderby'                => 'menu_order name',
+			'update_post_term_cache' => false,
+			'tax_query'              => [
 				[
 					'taxonomy' => \NavigationSections\Taxonomy\get_slug(),
 					'field'    => 'id',
@@ -79,12 +82,12 @@ function filter_nav_menu_item_args( \stdClass $args, \WP_Post $menu_item ) : \st
 		$sub_menu .= '<ul class="sub-menu">';
 
 		foreach ( $items->posts as $item ) {
-			$item_title = get_post_meta( $item->ID, Page\get_title_meta_key(), true );
+			$item_title = get_post_meta( $item, Page\get_title_meta_key(), true );
 			$item_title = $item_title ? $item_title : get_the_title( $item );
 
 			ob_start();
 			?>
-			<li><a href="<?php echo esc_url( get_permalink( $item->ID ) ); ?>"><?php echo esc_html( $item_title ); ?></a></li>
+			<li><a href="<?php echo esc_url( get_permalink( $item ) ); ?>"><?php echo esc_html( $item_title ); ?></a></li>
 			<?php
 			$sub_menu .= ob_get_clean();
 		}
