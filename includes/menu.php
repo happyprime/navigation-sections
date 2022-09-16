@@ -11,7 +11,8 @@ use NavigationSections\Page;
 use NavigationSections\Taxonomy;
 
 add_filter( 'nav_menu_link_attributes', __NAMESPACE__ . '\filter_menu_link_attributes', 10, 2 );
-add_filter( 'nav_menu_item_args', __NAMESPACE__ . '\filter_nav_menu_item_args', 99, 3 );
+add_filter( 'nav_menu_item_title', __NAMESPACE__ . '\filter_menu_item_title', 10, 2 );
+add_filter( 'nav_menu_item_args', __NAMESPACE__ . '\filter_nav_menu_item_args', 99, 2 );
 
 /**
  * Replace the menu item's anchor href with a URL stored in meta.
@@ -29,24 +30,37 @@ function filter_menu_link_attributes( array $atts, \WP_Post $menu_item ) : array
 }
 
 /**
+ * Filter the title used for a navigation section menu item.
+ *
+ * @param string   $title     The menu item title.
+ * @param \WP_Post $menu_item The menu item.
+ * @return string Modified menu item title.
+ */
+function filter_menu_item_title( string $title, \WP_Post $menu_item ) : string {
+	if ( Taxonomy\get_slug() !== $menu_item->object ) {
+		return $title;
+	}
+
+	$label = get_term_meta( $menu_item->object_id, Taxonomy\get_label_meta_key(), true );
+
+	return $label ? $label : $title;
+}
+
+/**
  * Filter a navigation section nav item to include its sub menu.
  *
- * @param stdClass $args      An object of wp_nav_menu() arguments.
- * @param WP_Post  $menu_item Menu item data object.
- * @param int      $depth     Depth of menu item. Used for padding.
+ * @param \stdClass $args      An object of wp_nav_menu() arguments.
+ * @param \WP_Post  $menu_item Menu item data object.
+ * @return \stdClass Modified nav menu arguments.
  */
-function filter_nav_menu_item_args( $args, $menu_item, $depth ) {
+function filter_nav_menu_item_args( \stdClass $args, \WP_Post $menu_item ) : \stdClass {
 	if ( Taxonomy\get_slug() !== $menu_item->object ) {
 		return $args;
 	}
 
-	$nav_parent = get_post( $menu_item->menu_item_parent );
-	$nav_parent = wp_setup_nav_menu_item( $nav_parent );
-
 	$items = new \WP_Query(
 		[
 			'post_type'      => 'page',
-			'post_parent'    => $nav_parent->object_id,
 			'posts_per_page' => 100,
 			'order'          => 'ASC',
 			'orderby'        => 'name',

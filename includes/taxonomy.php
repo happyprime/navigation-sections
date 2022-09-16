@@ -34,6 +34,15 @@ function get_url_meta_key() : string {
 }
 
 /**
+ * Retrieve the meta key used to capture a section's label.
+ *
+ * @return string The meta key.
+ */
+function get_label_meta_key() : string {
+	return '_navigation_section_label';
+}
+
+/**
  * Register the navigation section taxonomy.
  */
 function register() {
@@ -71,6 +80,11 @@ function display_add_form_fields() : void {
 		<input type="text" name="navigation_section_url" id="navigation-section-url" />
 		<p class="description">The URL to associate with this section.</p>
 	</div>
+	<div class="form-field">
+		<label for="navigation-section-label">Section Label:</label>
+		<input type="text" name="navigation_section_label" id="navigation-section-label" />
+		<p class="description">The text output as the menu item.</p>
+	</div>
 	<?php
 }
 
@@ -80,7 +94,8 @@ function display_add_form_fields() : void {
  * @param \WP_Term $term The term being edited.
  */
 function display_edit_form_fields( \WP_Term $term ) : void {
-	$url = get_term_meta( $term->term_id, get_url_meta_key(), true );
+	$url   = get_term_meta( $term->term_id, get_url_meta_key(), true );
+	$label = get_term_meta( $term->term_id, get_label_meta_key(), true );
 
 	wp_nonce_field( get_url_meta_key(), get_url_meta_key() . '_nonce' );
 
@@ -92,6 +107,15 @@ function display_edit_form_fields( \WP_Term $term ) : void {
 		<td>
 			<input type="text" name="navigation_section_url" id="navigation-section-url" value="<?php echo esc_attr( $url ); ?>" />
 			<p class="description">The URL to associate with this section.</p>
+		</td>
+	</tr>
+	<tr class="form-field">
+		<th scope="row">
+			<label for="navigation-section-label">Section Label</label>
+		</th>
+		<td>
+			<input type="text" name="navigation_section_label" id="navigation-section-label" value="<?php echo esc_attr( $label ); ?>" />
+			<p class="description">The text output as the menu item.</p>
 		</td>
 	</tr>
 	<?php
@@ -112,6 +136,12 @@ function save_term_meta( int $term_id ) : void {
 	} else {
 		delete_term_meta( $term_id, get_url_meta_key() );
 	}
+
+	if ( isset( $_POST['navigation_section_label'] ) && '' !== $_POST['navigation_section_label'] )  {
+		update_term_meta( $term_id, get_label_meta_key(), sanitize_text_field( $_POST['navigation_section_label'] ) );
+	} else {
+		delete_term_meta( $term_id, get_label_meta_key() );
+	}
 }
 
 /**
@@ -124,6 +154,7 @@ function save_term_meta( int $term_id ) : void {
 function filter_columns( array $columns ) : array {
 	unset( $columns['posts'] );
 
+	$columns['label'] = 'Label';
 	$columns['url']   = 'URL';
 	$columns['posts'] = 'Count';
 
@@ -144,6 +175,14 @@ function filter_column_data( string $content, string $column, int $term_id ) : s
 
 		if ( $url ) {
 			return esc_url( $url );
+		}
+	}
+
+	if ( 'label' === $column ) {
+		$label = get_term_meta( $term_id, get_label_meta_key(), true );
+
+		if ( $label ) {
+			return esc_html( $label );
 		}
 	}
 
