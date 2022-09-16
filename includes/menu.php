@@ -63,7 +63,7 @@ function filter_nav_menu_item_args( \stdClass $args, \WP_Post $menu_item ) : \st
 			'post_type'      => 'page',
 			'posts_per_page' => 100,
 			'order'          => 'ASC',
-			'orderby'        => 'name',
+			'orderby'        => 'menu_order name',
 			'tax_query'      => [
 				[
 					'taxonomy' => \NavigationSections\Taxonomy\get_slug(),
