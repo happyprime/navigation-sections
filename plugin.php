@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:  Navigation Sections
- * Description:  Categorize content in sections to be grouped in menus.
+ * Description:  Group and display pages in navigation sections.
  * Version:      0.0.1
  * Plugin URI:   https://github.com/happyprime/navigation-sections/
  * Author:       Happy Prime
